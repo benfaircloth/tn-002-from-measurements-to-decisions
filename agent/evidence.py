@@ -4,21 +4,20 @@ import numpy as np
 
 
 class EvidenceStream:
-    """Produces observations drawn from a true underlying distribution.
+    """Produces noisy observations of an unknown true state.
 
-    The agent does not know the true parameters. It only sees
-    the observations it has collected so far.
+    The agent knows the noise level but not the true state.
     """
 
-    def __init__(self, true_mean: float, true_std: float,
+    def __init__(self, true_mean: float, noise_std: float,
                  seed: int = 42):
         self.true_mean = true_mean
-        self.true_std = true_std
+        self.noise_std = noise_std
         self._rng = np.random.default_rng(seed)
         self.observations: list[float] = []
 
     def observe(self) -> float:
-        value = self._rng.normal(self.true_mean, self.true_std)
+        value = self._rng.normal(self.true_mean, self.noise_std)
         self.observations.append(value)
         return value
 

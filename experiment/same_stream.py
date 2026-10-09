@@ -9,7 +9,7 @@ from agent.stopping import compute_confidence
 
 
 def main():
-    stream = EvidenceStream(true_mean=0.80, true_std=0.12, seed=42)
+    stream = EvidenceStream(true_mean=0.80, noise_std=0.12, seed=42)
 
     threshold = 0.75
 
@@ -20,17 +20,13 @@ def main():
     cautious_stopped = None
 
     print(f"Investigating: is the true state >= {threshold}?")
-    print(f"Evidence source: true mean=0.80, true std=0.12")
+    print(f"Evidence source: true mean=0.80, noise std=0.12")
     print()
-    print(f"{'step':>5}  {'mean':>7}  {'se':>7}  "
-          f"{'P(H|E)':>8}  {'event'}")
-    print("-" * 52)
+    print(f"{'step':>5}  {'mean':>7}  {'P(H|E)':>8}  {'event'}")
+    print("-" * 48)
 
     for step in range(1, 201):
         stream.observe()
-
-        if stream.n < 3:
-            continue
 
         p = compute_confidence(stream, threshold)
 
@@ -44,7 +40,6 @@ def main():
 
         if event or step <= 10 or step % 20 == 0:
             print(f"{step:>5}  {stream.running_mean:>7.4f}  "
-                  f"{stream.standard_error:>7.4f}  "
                   f"{p:>8.3f}  {event}")
 
         if decisive_stopped and cautious_stopped:

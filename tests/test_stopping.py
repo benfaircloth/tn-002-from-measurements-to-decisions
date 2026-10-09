@@ -3,10 +3,8 @@ from agent.requirement import Requirement
 from agent.stopping import should_stop, run_until_stop
 
 
-def test_not_enough_evidence():
+def test_no_evidence():
     stream = EvidenceStream(0.90, 0.01)
-    stream.observe()
-    stream.observe()
     req = Requirement(threshold=0.50, confidence=0.90)
     assert should_stop(stream, req) is False
 
