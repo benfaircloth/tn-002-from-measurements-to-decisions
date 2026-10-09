@@ -3,7 +3,8 @@ name = "tn-002-measurements-to-decisions"
 version = "0.1.0"
 description = "Companion code for Teaching Note 002: From Measurements to Decisions"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26"]
+dependencies = ["numpy>=1.26", "scipy>=1.12"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]

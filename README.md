@@ -2,23 +2,23 @@
 
 Companion code for [Teaching Note 002](https://benfaircloth.com/teaching/tn-002-from-measurements-to-decisions/).
 
-Monte Carlo simulation for reasoning about model selection under uncertainty, requirements, and joint constraints.
+An agent accumulates evidence for a proposition and decides when it has enough to act. There is no stopping point in the evidence alone. Stopping happens when the evidence meets a requirement.
 
 ## Structure
 
 ```
-measurement/
-  simulation.py     Score sampling and threshold probability
-  requirement.py    Requirement dataclass and acceptance rule
-  joint.py          Joint probability across multiple dimensions
+agent/
+  evidence.py       Evidence stream with running statistics
+  requirement.py    Requirement dataclass (threshold, confidence)
+  stopping.py       Stopping logic: P(H | evidence) >= confidence
 
 experiment/
-  sweep_threshold.py   Sweep quality threshold from 0.70 to 0.90
-  joint_decision.py    Quality + latency joint requirement
+  same_stream.py    Two confidence requirements on the same evidence
+  sweep_stopping.py Sweep confidence and observe the cost
 
 tests/
-  test_requirement.py  Acceptance rule boundary tests
-  test_simulation.py   Sampling and probability tests
+  test_evidence.py  Evidence accumulation and convergence
+  test_stopping.py  Stopping boundary and ordering tests
 ```
 
 ## Run the tests
@@ -30,17 +30,17 @@ pytest
 ## Run the experiments
 
 ```
-python -m experiment.sweep_threshold
-python -m experiment.joint_decision
+python -m experiment.same_stream
+python -m experiment.sweep_stopping
 ```
 
-The threshold sweep shows where the preferred model reverses as the requirement changes. The joint decision adds latency as a second uncertain dimension and evaluates both constraints simultaneously.
+`same_stream` shows two agents investigating the same hypothesis from identical evidence. The decisive agent (confidence >= 0.80) acts early. The cautious agent (confidence >= 0.95) keeps gathering. The evidence did not change. The requirement decided when to act.
+
+`sweep_stopping` varies the confidence requirement across many trials and reports how many observations the agent needed before acting. As the requirement increases, the agent needs substantially more evidence. The tradeoff between decision reliability and evidence-gathering cost becomes visible.
 
 ## The point
 
-The value is not the simulation. The value is keeping measurement, uncertainty, requirement, and decision separate so each can be inspected independently.
-
-A score tells us what happened. A requirement tells us what is enough. A decision asks whether the evidence meets the requirement. Simulation is useful when several uncertain conditions interact, but it does not remove the judgment behind the requirement.
+An agent that can observe its environment still needs something external to decide when its observations are sufficient. The evidence tells the agent what it has seen so far. The requirement tells it when that is enough. Those are different questions, and collapsing them produces an agent that either acts too early or never acts at all.
 
 ## License
 
